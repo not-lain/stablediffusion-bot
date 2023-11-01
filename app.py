@@ -28,6 +28,7 @@ def get_client(session: Optional[str] = None) -> grc.Client:
     return client
 
 intents = discord.Intents.default()
+intents.message_content = True
 bot = commands.Bot(command_prefix="/",intents=intents)
 
 
@@ -39,7 +40,7 @@ async def on_ready():
     print("------")
 
 
-def text2img(pos_prompt: str, neg_promt: str = ""):
+async def text2img(pos_prompt: str, neg_promt: str = ""):
     """
     Generates an image based on the given positive prompt and optional negative prompt.
 
@@ -63,16 +64,18 @@ def text2img(pos_prompt: str, neg_promt: str = ""):
         "seed" : -1
     }
     
-    client = get_client()
+    loop = asyncio.get_running_loop()
+    client = await loop.run_in_executor(None, get_client, None)
     txt2img_args = txt2img_conf.values()
-    img = client.predict(*txt2img_args, fn_index=0)
+    job = client.submit(*txt2img_args, fn_index=0)
     
     # img = Image.open(img)
     # img.show()
-    return img
+    await wait(job)
+    return job.result()
     
     
-def img2img(pos_prompt: str, neg_promt: str = "", img = None):
+async def img2img(pos_prompt: str, neg_promt: str = "", img = None):
     """
     Generates an image based on the given positive prompt, optional negative prompt and image path.
 
@@ -99,14 +102,15 @@ def img2img(pos_prompt: str, neg_promt: str = "", img = None):
         "seed" : -1
     }
     
-    client = get_client()
+    loop = asyncio.get_running_loop()
+    client = await loop.run_in_executor(None, get_client, None)
     img2img_args = img2img_conf.values()
-    img = client.predict(*img2img_args, fn_index=1)
+    job = client.predict(*img2img_args, fn_index=1)
     
     # img = Image.open(img)
     # img.show()
-    
-    return img
+    await wait(job)
+    return job.result()
 
 def run_dffusion(pos_prompt: str,neg_promt: str = "", mode = "txt2img", img= None):
     """Runs the diffusion model."""
@@ -133,10 +137,10 @@ async def diffusion(ctx, pos_prompt: str="",neg_promt: str = "", mode: str = "tx
     """Creates an AI generated image based on a prompt."""
     try :
         await ctx.reply("generating ...")
-        result = run_dffusion(pos_prompt , neg_promt, mode, img)
+        result = await run_dffusion(pos_prompt , neg_promt, mode, img)
         # wait for the result to be ready
-        print("result : ", result)
-        await ctx.channel.send(result)
+        # print("result : ", result)
+        await ctx.channel.send(file=discord.File(result))
     except Exception as e:
         print(e)
         await ctx.send("Error occured while running the model. Please try again later.")
