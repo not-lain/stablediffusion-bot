@@ -112,19 +112,17 @@ async def img2img(pos_prompt: str, neg_promt: str = "", img = None):
     await wait(job)
     return job.result()
 
-def run_dffusion(pos_prompt: str,neg_promt: str = "", mode = "txt2img", img= None):
+def run_dffusion(pos_prompt: str,neg_promt: str = "",img_url= None):
     """Runs the diffusion model."""
     
     print("Running diffusion")
     
-    if mode == "txt2img":
+    if img_url == None:
         # Support for text prompts
         generated_image = text2img(pos_prompt, neg_promt)
-    elif mode == "img2img":
-        # Support for image prompts
-        generated_image = img2img(pos_prompt, neg_promt, img)
     else:
-        return None
+        # Support for image prompts
+        generated_image = img2img(pos_prompt, neg_promt, img_url)
 
     return generated_image
 
@@ -133,11 +131,11 @@ def run_dffusion(pos_prompt: str,neg_promt: str = "", mode = "txt2img", img= Non
     name="diffusion",
     description="creates an AI generated image"
 )
-async def diffusion(ctx, pos_prompt: str="",neg_promt: str = "", mode: str = "txt2img", img= None):
+async def diffusion(ctx, pos_prompt: str="",neg_promt: str = "", img_url= None):
     """Creates an AI generated image based on a prompt."""
     try :
         await ctx.reply("generating ...")
-        result = await run_dffusion(pos_prompt , neg_promt, mode, img)
+        result = await run_dffusion(pos_prompt , neg_promt,img_url)
         # wait for the result to be ready
         # print("result : ", result)
         await ctx.channel.send(file=discord.File(result))
