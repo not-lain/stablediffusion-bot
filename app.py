@@ -114,9 +114,7 @@ async def img2img(pos_prompt: str, neg_promt: str = "", img = None):
 
 def run_dffusion(pos_prompt: str,neg_promt: str = "",img_url= None):
     """Runs the diffusion model."""
-    
-    print("Running diffusion")
-    
+
     if img_url == None:
         # Support for text prompts
         generated_image = text2img(pos_prompt, neg_promt)
@@ -134,12 +132,12 @@ def run_dffusion(pos_prompt: str,neg_promt: str = "",img_url= None):
 async def diffusion(ctx, pos_prompt: str="",neg_promt: str = "", img_url= None):
     """Creates an AI generated image based on a prompt."""
     try :
-        await ctx.reply(f"generating image for { ctx.author.mention } ... \npos_prompt: {pos_prompt} \nneg_prompt: {neg_promt} \nimage_url: {img_url}")
+        await ctx.reply(f"generating image for { ctx.author.mention } ... \npos_prompt: {pos_prompt} \nneg_prompt: {neg_promt} \nimage_url: `{img_url}`")
         result = await run_dffusion(pos_prompt , neg_promt,img_url)
         await ctx.channel.send(file=discord.File(result))
     except Exception as e:
-        print(e)
         await ctx.send("Error occured while running the model. Please try again later.")
+        await ctx.send(e)
         return
 
 
@@ -156,7 +154,7 @@ threading.Thread(target=run_bot).start()
 welcome_message = """
 # Welcome to the Stable Diffusion Discord Bot!
 
-add the bot to your server by clicking [here](https://discord.com/api/oauth2/authorize?client_id=1169134134250180649&permissions=2147485696&scope=applications.commands%20bot)
+add the bot to your server by clicking [here](https://discord.com/api/oauth2/authorize?client_id=1169134134250180649&permissions=2147518464&scope=bot%20applications.commands)
 """
 
 with gr.Blocks() as demo : 
