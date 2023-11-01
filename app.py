@@ -80,7 +80,7 @@ add the bot to your server by clicking [here](https://discord.com/api/oauth2/aut
 """
 
 with gr.Blocks() as demo : 
-    gr.Markdown(welcome_message)
+    gr.Markdown(f"{welcome_message}")
 
-demo.queue().launch()
+demo.launch()
 
