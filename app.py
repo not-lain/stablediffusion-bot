@@ -71,7 +71,6 @@ def run_bot():
         event.set()
 
 threading.Thread(target=run_bot).start()
-event.wait()
 
 welcome_message = """
 # Welcome to the Stable Diffusion Discord Bot!
@@ -82,5 +81,5 @@ add the bot to your server by clicking [here](https://discord.com/api/oauth2/aut
 with gr.Blocks() as demo : 
     gr.Markdown(f"{welcome_message}")
 
-demo.launch()
+demo.queue().launch()
 
