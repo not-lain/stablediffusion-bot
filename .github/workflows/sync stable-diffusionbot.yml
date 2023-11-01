@@ -1,0 +1,19 @@
+name: sync stable-diffusionbot
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: sync stable-diffusionbot
+      uses: nateraw/huggingface-sync-action@v0.0.4
+      with:
+        github_repo_id: not-lain/stablediffusion-bot
+        huggingface_repo_id: not-lain/stablediffusion-bot
+        repo_type: space
+        space_sdk: gradio
+        hf_token: ${{ secrets.HF_TOKEN }}
