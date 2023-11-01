@@ -105,7 +105,7 @@ async def img2img(pos_prompt: str, neg_promt: str = "", img = None):
     loop = asyncio.get_running_loop()
     client = await loop.run_in_executor(None, get_client, None)
     img2img_args = img2img_conf.values()
-    job = client.predict(*img2img_args, fn_index=1)
+    job = client.submit(*img2img_args, fn_index=1)
     
     # img = Image.open(img)
     # img.show()
