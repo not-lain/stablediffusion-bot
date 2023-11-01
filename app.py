@@ -134,10 +134,8 @@ def run_dffusion(pos_prompt: str,neg_promt: str = "",img_url= None):
 async def diffusion(ctx, pos_prompt: str="",neg_promt: str = "", img_url= None):
     """Creates an AI generated image based on a prompt."""
     try :
-        await ctx.reply("generating ...")
+        await ctx.reply(f"generating image for { ctx.author.mention } ... \npos_prompt: {pos_prompt} \nneg_prompt: {neg_promt} \nimage_url: {img_url}")
         result = await run_dffusion(pos_prompt , neg_promt,img_url)
-        # wait for the result to be ready
-        # print("result : ", result)
         await ctx.channel.send(file=discord.File(result))
     except Exception as e:
         print(e)
