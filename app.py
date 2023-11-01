@@ -9,6 +9,7 @@ import gradio as gr
 from discord.ext import commands
 import gradio_client as grc
 from gradio_client.utils import QueueError
+# from PIL import Image
 
 dotenv.load_dotenv()
 event = Event()
@@ -38,14 +39,91 @@ async def on_ready():
     print("------")
 
 
+def text2img(pos_prompt: str, neg_promt: str = ""):
+    """
+    Generates an image based on the given positive prompt and optional negative prompt.
+
+    Args:
+        pos_prompt (str): The positive prompt to generate the image.
+        neg_prompt (str, optional): The negative prompt to generate the image. Defaults to "".
+
+    Returns:
+        The generated image.
+    """
+    
+    txt2img_conf = {
+        "parameter_11" : pos_prompt,
+        "parameter_12" : neg_promt,
+        "stable_diffusion_checkpoint" : "3Guofeng3_v34.safetensors [50f420de]",
+        "sampling_steps" : 25,
+        "sampling_method" : "DPM++ 2M Karras",
+        "cfg_scale" : 7,
+        "width" : 512,
+        "height" : 512,
+        "seed" : -1
+    }
+    
+    client = get_client()
+    txt2img_args = txt2img_conf.values()
+    img = client.predict(*txt2img_args, fn_index=0)
+    
+    # img = Image.open(img)
+    # img.show()
+    
+    return img
+    
+    
+def img2img(pos_prompt: str, neg_promt: str = "", img = None):
+    """
+    Generates an image based on the given positive prompt, optional negative prompt and image path.
+
+    Args:
+        pos_prompt (str): The positive prompt for the image generation.
+        neg_promt (str, optional): The negative prompt for the image generation. Defaults to "".
+        img (filepath or URL to image): The input image for the image generation. Defaults to None.
+
+    Returns:
+        The generated image.
+    """
+    
+    img2img_conf = {
+        "parameter_52" : img,
+        "denoising_strength" : 0.7,
+        "parameter_44" : pos_prompt,
+        "parameter_45" : neg_promt,
+        "stable_diffusion_checkpoint" : "3Guofeng3_v34.safetensors [50f420de]",
+        "sampling_steps" : 25,
+        "sampling_method" : "DPM++ 2M Karras",
+        "cfg_scale" : 7,
+        "width" : 512,
+        "height" : 512,
+        "seed" : -1
+    }
+    
+    client = get_client()
+    img2img_args = img2img_conf.values()
+    img = client.predict(*img2img_args, fn_index=1)
+    
+    # img = Image.open(img)
+    # img.show()
+    
+    return img
+
 def run_dffusion(pos_prompt: str,neg_promt: str = "", mode = "txt2img", img= None):
     """Runs the diffusion model."""
-    # TODO: 
-    # Add support for image prompts
-    # Add support for text prompts
+    
     print("Running diffusion")
+    
+    if mode == "txt2img":
+        # Support for text prompts
+        generated_image = text2img(pos_prompt, neg_promt)
+    elif mode == "img2img":
+        # Support for image prompts
+        generated_image = img2img(pos_prompt, neg_promt, img)
+    else:
+        return None
 
-
+    return generated_image
 
 
 @bot.hybrid_command(
