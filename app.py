@@ -69,7 +69,6 @@ def text2img(pos_prompt: str, neg_promt: str = ""):
     
     # img = Image.open(img)
     # img.show()
-    
     return img
     
     
@@ -133,12 +132,16 @@ def run_dffusion(pos_prompt: str,neg_promt: str = "", mode = "txt2img", img= Non
 async def diffusion(ctx, pos_prompt: str="",neg_promt: str = "", mode: str = "txt2img", img= None):
     """Creates an AI generated image based on a prompt."""
     try :
-        run_dffusion(pos_prompt , neg_promt, mode, img)
-        await ctx.reply("Done!")
+        await ctx.reply("generating ...")
+        result = run_dffusion(pos_prompt , neg_promt, mode, img)
+        # wait for the result to be ready
+        print("result : ", result)
+        await ctx.channel.send(result)
     except Exception as e:
         print(e)
         await ctx.send("Error occured while running the model. Please try again later.")
         return
+
 
 
 def run_bot():
